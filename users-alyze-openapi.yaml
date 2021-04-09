@@ -1,0 +1,170 @@
+openapi: 3.0.0
+info: 
+  title: users-alyze
+  description: Demostración operativa de gestion de usuarios (CRUD) mediante API REST
+  contact: 
+    name: Janet
+  version: 1.0.0
+servers:
+  - url: https://us-central1-users-alyze.cloudfunctions.net
+    description: Server for development
+tags:
+  - name: Users
+paths:
+  /users:
+    get: 
+      tags: 
+      - Users
+      summary: List all users
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+    post:
+      tags: 
+      - Users 
+      summary: Create new user
+      requestBody:
+        description: User information
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '201': 
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/ResultMessage'
+        '409':
+          description: Conflict, user duplicated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResultMessageAlreadyExists'
+  /users/{id}:
+    parameters:
+      - name: id
+        in: path
+        description: User id
+        required: true
+        schema:
+          type: string  
+    get: 
+      tags: 
+      - Users
+      summary: Find User
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/User'
+        '404': 
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResultMessageNotExists'
+    delete:
+      tags:
+      - Users
+      summary: Delete User
+      responses:
+        '200':
+          description: User deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResultMessageDeleted'
+        '404': 
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResultMessageNotExists'
+    put:
+      tags:
+      - Users
+      summary: Update User
+      requestBody:
+        description: User information
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserWithoutId'
+      responses:
+        '200':
+          description: User deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResultMessageUpdated'
+        '404': 
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResultMessageNotExists'
+
+components:
+  schemas:
+    User:
+      type: object
+      properties: 
+        id:
+          type: string
+          example: 55555555K
+        name:
+          type: string
+          example: Janet
+      required:
+      - id
+      - name
+    UserWithoutId:
+      type: object
+      properties: 
+        name:
+          type: string
+          example: Yanes
+      required:
+      - name
+    ResultMessage:
+      type: object
+      properties: 
+        result:
+          type: string
+          example: user with ID 55555555K added
+    ResultMessageNotExists:
+      type: object
+      properties: 
+        result:
+          type: string
+          example: user with ID 55555555K not exists
+    ResultMessageAlreadyExists:
+      type: object
+      properties: 
+        result:
+          type: string
+          example: user with ID 55555555K already exists
+    ResultMessageDeleted:
+      type: object
+      properties: 
+        result:
+          type: string
+          example: user with ID 55555555K deleted
+    ResultMessageUpdated:
+      type: object
+      properties: 
+        result:
+          type: string
+          example: user with ID 55555555K updated
