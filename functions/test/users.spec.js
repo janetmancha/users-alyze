@@ -5,18 +5,18 @@ const users = require("../users").users;
 
 const id = "55555555K"
 const anotherId = "11111111A"
+let realRes = {};
+const res = {
+  status: (status) => {
+    realStatus = status;
+    return { json: (res) => realRes = res };
+  }
+}
+let realStatus = 0;
 
 describe("Unit tests", () => {
   it("tests create user", async () => {
-    let realRes = {};
-    let realStatus = 0;
-    const req = { body: {id: id, name: "Janet"} };
-    const res = {
-      status: (status) => {
-        realStatus = status;
-        return { json: (res) => realRes = res };
-      }
-    }
+    const req = { body: {id: id, name: "Janet"} };   
     await users.create(req, res)
     ref = admin.firestore().collection('users').doc(id)
     doc = await ref.get();
@@ -31,15 +31,7 @@ describe("Unit tests", () => {
   });
 
   it("tests get user", async () => {
-    let realRes = {};
-    let realStatus = 0;
     const req = { params: {id: id} };
-    const res = {
-      status: (status) => {
-        realStatus = status;
-        return { json: (res) => realRes = res }
-      }
-    }
     await users.get(req, res);
     expect(realRes).to.deep.eq({id: id, name: "Janet"});
     expect(realStatus).to.eq(200);
@@ -52,15 +44,7 @@ describe("Unit tests", () => {
   });
 
   it("tests update user", async () => {
-    let realRes = {};
-    let realStatus = 0;
     const req = { params: {id: id}, body: {name: "Maria"} };
-    const res = {
-      status: (status) => {
-        realStatus = status;
-        return { json: (res) => realRes = res };
-      }
-    }
     await users.update(req, res);
     ref = admin.firestore().collection('users').doc(id);
     doc = await ref.get();
@@ -76,15 +60,7 @@ describe("Unit tests", () => {
   });
 
   it("tests delete user", async () => {
-    let realRes = {};
-    let realStatus = 0;
     const req = { params: {id: id} };
-    const res = {
-      status: (status) => {
-        realStatus = status;
-        return { json: (res) => realRes = res };
-      }
-    }
     await users.delete(req, res);
     ref = admin.firestore().collection('users').doc(id);
     doc = await ref.get();
@@ -99,16 +75,8 @@ describe("Unit tests", () => {
     expect(realStatus).to.eq(404);
   });
 
-    it("tests list users", async () => {
-    let realRes = {};
-    let realStatus = 0;
-    let req = { };
-    const res = {
-      status: (status) => {
-        realStatus = status;
-        return { json: (res) => realRes = res };
-      }
-    }
+  it("tests list users", async () => {
+    let req = {};
     // Test with no user
     await users.list(req, res);
     expect(realRes).to.deep.eq([]);
