@@ -19,7 +19,8 @@ exports.users = {
         const doc = await ref.get();
         if (doc.exists) {
             data = doc.data();
-            res.status(200).json({ id: req.params.id, name: data.name});
+            data.id = req.params.id
+            res.status(200).json(data);
         } else {
             res.status(404).json({result: `user with ID: ${req.params.id} does not exists.`});
         }
